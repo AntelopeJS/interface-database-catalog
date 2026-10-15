@@ -1,6 +1,6 @@
 {
   "name": "@antelopejs/interface-database-catalog",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "AntelopeJS interface for describing and profiling a connected database",
   "keywords": [
     "antelopejs",
