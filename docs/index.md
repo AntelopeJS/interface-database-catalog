@@ -1,6 +1,6 @@
 # Inspect an existing database
 
-Use `@antelopejs/interface-database-catalog` to discover relations, inspect their structure, and profile aggregate characteristics before mapping an existing database into an application. The catalog describes a provider's connection; it does not open a new connection, register tables, or return raw records.
+Use `@antelopejs/interface-database-catalog` to discover relations, inspect their structure, and profile aggregate characteristics before mapping an existing database into an application. The catalog describes a provider's connection; it does not open a new connection or register tables, and it returns no raw records except through `SampleRows`, a few rows for a person to look at.
 
 ## Before you begin
 
@@ -49,9 +49,14 @@ Review `unmappable`, each column's `accepts` and `lossy` notes, and write permis
 
 ## Advanced: select a named provider
 
-A module that implements `@antelopejs/interface-database` over a database it does not own may also implement this interface. A consumer reaches it through a connection declared in the project configuration, one per database:
+A module that implements `@antelopejs/interface-database` over a database it does not own may also implement this interface. Each consumer reaches it through a connection declared on its own module entry in the project configuration, one per database. Two consumers of the same database give their connections the same id:
 
 ```ts
+"dms-builder": {
+  importOverrides: [
+    { interface: "@antelopejs/interface-database-catalog", source: "postgres-erp", id: "erp" },
+  ],
+},
 "dms-ai": {
   importOverrides: [
     { interface: "@antelopejs/interface-database-catalog", source: "postgres-erp", id: "erp" },
@@ -82,13 +87,14 @@ Run this inside the consuming AntelopeJS module, with the provider loaded and th
 
 ## Functions
 
-| Function                          | Answers                                                                                                                         |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `Info()`                          | engine, version, database and role of the connection                                                                            |
-| `ListRelations(schemas?)`         | visible relations (excluding child partitions), row estimates, keys, write privileges, and mapping refusals                     |
-| `DescribeRelations(relations)`    | the named relations in full: columns with their native types and the declarations they accept, indexes, foreign keys out and in |
-| `Profile({ relation, columns? })` | aggregates per column and per foreign key, and the traits they imply                                                            |
-| `CheckReference({ from, to })`    | whether one column's non-null values occur in another, without assuming a declared foreign key                                  |
+| Function                                    | Answers                                                                                                                         |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `Info()`                                    | engine, version, database and role of the connection                                                                            |
+| `ListRelations(schemas?)`                   | visible relations (excluding child partitions), row estimates, keys, write privileges, and mapping refusals                     |
+| `DescribeRelations(relations)`              | the named relations in full: columns with their native types and the declarations they accept, indexes, foreign keys out and in |
+| `Profile({ relation, columns? })`           | aggregates per column and per foreign key, and the traits they imply                                                            |
+| `CheckReference({ from, to })`              | whether one column's non-null values occur in another, without assuming a declared foreign key                                  |
+| `SampleRows({ relation, columns?, limit })` | a few rows, each value as text, for a person to look at; never for a generator or a model                                       |
 
 Relations are named `"schema.name"`.
 
@@ -115,6 +121,17 @@ Every measure has its own time bound. Handle its status before reading a value; 
 | `"error"`   | `code`         | The database refused the measure; only its error code is exposed.                   |
 
 A large relation is sampled, and `sample` reports the percentage and row count. A distinct count from a sample is a lower bound. Row counts also carry an `exact` flag. `CheckReference` reports containment and whether the target is a key; it does not prove that the database enforces a foreign key.
+
+## What a sample answers
+
+`SampleRows` is the one function that answers row values. It is meant for a person deciding what a relation's columns hold, never for a generator or a model:
+
+- at most `SAMPLE_ROWS_LIMIT` (20) rows;
+- every value as text, cut at `SAMPLE_TEXT_LENGTH` (200) characters, and `truncated` when it was;
+- a binary value as its length only;
+- a large relation is sampled as a profile is, and `sample` says so.
+
+It reads without writing anything, within the same time bounds as a profile.
 
 ## Refusals
 
