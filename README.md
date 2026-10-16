@@ -47,7 +47,7 @@ Relations are named `"schema.name"`, the form `DescribeRelations` and `Profile` 
 
 ## Documentation
 
-- [Overview](./docs/index.md)
+- [Overview](https://github.com/AntelopeJS/interface-database-catalog/blob/main/docs/index.md)
 
 ## Compatibility
 
