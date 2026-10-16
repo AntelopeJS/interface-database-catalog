@@ -12,7 +12,26 @@ A module that implements `@antelopejs/interface-database` over a database it doe
 },
 ```
 
-`GetInterfaceInstances` then lists the declared connections, and `GetInterfaceInstance(catalog, "erp")` reaches that one.
+`GetInterfaceInstances(interfaceID)` lists connections visible to the calling module. `GetInterfaceInstance(interfaceID, connectionID)` returns connection metadata, including its loadable `path`, or `undefined`; it does not return the catalog exports. Resolve the connection by package name and load its path using AntelopeJS's established CommonJS loader pattern:
+
+```ts docs-check
+import { GetInterfaceInstance } from "@antelopejs/interface-core";
+
+export async function inspectErp() {
+  const connection = GetInterfaceInstance(
+    "@antelopejs/interface-database-catalog",
+    "erp",
+  );
+  if (!connection) throw new Error("Missing erp catalog connection");
+
+  const catalog: typeof import("@antelopejs/interface-database-catalog") = require(
+    connection.path,
+  );
+  return await catalog.ListRelations(["public"]);
+}
+```
+
+Run this inside the consuming AntelopeJS module, with the provider loaded and the connection configured. A plain package import uses that module's default binding; loading `connection.path` selects the named binding. These calls do not create database connections themselves.
 
 ## Functions
 

@@ -47,14 +47,17 @@ Relations are named `"schema.name"`, the form `DescribeRelations` and `Profile` 
 
 ## Documentation
 
-- [Overview](https://github.com/AntelopeJS/interface-database-catalog/blob/main/docs/index.md)
+- [Overview and provider connections](./docs/index.md)
 
 ## Compatibility
 
-| Package                             | Range            |
-| ----------------------------------- | ---------------- |
-| `@antelopejs/interface-core` (peer) | `>=0.2.0 <1.0.0` |
-| `@antelopejs/core`                  | `>=1.14.0`       |
+Requires AntelopeJS core `>=1.14.0` and the following peer dependency:
+
+<!-- docs-compat: ./package.json#peerDependencies -->
+
+| Package                      | Range            |
+| ---------------------------- | ---------------- |
+| `@antelopejs/interface-core` | `>=0.2.0 <1.0.0` |
 
 ## Contributing
 
