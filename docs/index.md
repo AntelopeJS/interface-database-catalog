@@ -18,7 +18,36 @@ Run inside an AntelopeJS module in development, connected to a provider that imp
 
 Start with metadata before requesting profiles. Use qualified relation names such as `"public.orders"`; omitting `columns` profiles all columns of the selected relation.
 
-## Reaching a provider
+## Inspect one relation
+
+This example uses the consuming module's default catalog binding. First inspect the relation list, then pass a name it returned to `inspectRelation`, such as `"public.orders"`. It reads metadata only; profiling is a separate, potentially more expensive step.
+
+```ts docs-check
+import {
+  Info,
+  ListRelations,
+  DescribeRelations,
+} from "@antelopejs/interface-database-catalog";
+
+export async function listDatabase() {
+  return { connection: await Info(), relations: await ListRelations() };
+}
+
+export async function inspectRelation(relation: string) {
+  const descriptions = await DescribeRelations([relation]);
+  return descriptions.map((description) => ({
+    relation: `${description.schema}.${description.name}`,
+    key: description.key,
+    writes: description.writes,
+    columns: description.columns,
+    unmappable: description.unmappable,
+  }));
+}
+```
+
+Review `unmappable`, each column's `accepts` and `lossy` notes, and write permissions before generating table declarations. A missing key is not automatically a mapping refusal: such a relation can register without `_id`. Introspection does not grant permissions or add constraints.
+
+## Advanced: select a named provider
 
 A module that implements `@antelopejs/interface-database` over a database it does not own may also implement this interface. A consumer reaches it through a connection declared in the project configuration, one per database:
 
@@ -53,13 +82,13 @@ Run this inside the consuming AntelopeJS module, with the provider loaded and th
 
 ## Functions
 
-| Function                          | Answers                                                                                                                                                |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Info()`                          | engine, version, database and role of the connection                                                                                                   |
-| `ListRelations(schemas?)`         | every relation, partitions left out: kind, row estimate and its source, key, write privileges, comment, and why it cannot be registered when it cannot |
-| `DescribeRelations(relations)`    | the named relations in full: columns with their native types and the declarations they accept, indexes, foreign keys out and in                        |
-| `Profile({ relation, columns? })` | aggregates per column and per foreign key, and the traits they imply                                                                                   |
-| `CheckReference({ from, to })`    | how much of one column's values another column holds, for a reference the database does not declare                                                    |
+| Function                          | Answers                                                                                                                         |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `Info()`                          | engine, version, database and role of the connection                                                                            |
+| `ListRelations(schemas?)`         | visible relations (excluding child partitions), row estimates, keys, write privileges, and mapping refusals                     |
+| `DescribeRelations(relations)`    | the named relations in full: columns with their native types and the declarations they accept, indexes, foreign keys out and in |
+| `Profile({ relation, columns? })` | aggregates per column and per foreign key, and the traits they imply                                                            |
+| `CheckReference({ from, to })`    | whether one column's non-null values occur in another, without assuming a declared foreign key                                  |
 
 Relations are named `"schema.name"`.
 
