@@ -1,4 +1,22 @@
-# Interface Database Catalog
+# Inspect an existing database
+
+Use `@antelopejs/interface-database-catalog` to discover relations, inspect their structure, and profile aggregate characteristics before mapping an existing database into an application. The catalog describes a provider's connection; it does not open a new connection, register tables, or return raw records.
+
+## Before you begin
+
+Run inside an AntelopeJS module in development, connected to a provider that implements this catalog and does not own its tables. Every catalog function refuses outside development or on an instance that owns its tables. These are safety boundaries, not configuration errors to work around in production.
+
+## Explore in increasing detail
+
+| Step                                      | Call                             | Use the answer to…                                               |
+| ----------------------------------------- | -------------------------------- | ---------------------------------------------------------------- |
+| 1. Identify the connection                | `Info()`                         | Confirm the engine, database, and role before inspecting data.   |
+| 2. Select a relation                      | `ListRelations(schemas?)`        | Review names, keys, write privileges, and mapping refusals.      |
+| 3. Understand its structure               | `DescribeRelations(relations)`   | Inspect field declarations, indexes, and declared relationships. |
+| 4. Measure only what you need             | `Profile({ relation, columns })` | Inspect aggregates and traits for selected columns.              |
+| 5. Investigate an undeclared relationship | `CheckReference({ from, to })`   | Measure value containment without declaring a foreign key.       |
+
+Start with metadata before requesting profiles. Use qualified relation names such as `"public.orders"`; omitting `columns` profiles all columns of the selected relation.
 
 ## Reaching a provider
 
@@ -57,7 +75,17 @@ A profile holds aggregates, never rows:
 
 Values appear only as enum labels and as **categories**: the most frequent values of a column with few distinct values, each counted often enough to be a category rather than a record. Rarer values are folded into `other` and never named.
 
-Every measure has a time bound. A measure that does not finish answers `{ status: "timeout" }`, and the rest of the profile stands. A large relation is sampled, and `sample` says by how much. A distinct count from a sample is then a lower bound.
+### Interpret incomplete measurements
+
+Every measure has its own time bound. Handle its status before reading a value; a failed measure does not invalidate the rest of a profile.
+
+| Status      | Available data | Interpretation                                                                      |
+| ----------- | -------------- | ----------------------------------------------------------------------------------- |
+| `"ok"`      | `value`        | The measure completed. Check sampling and exactness before treating it as a census. |
+| `"timeout"` | No value       | The time bound expired; this is not a zero count.                                   |
+| `"error"`   | `code`         | The database refused the measure; only its error code is exposed.                   |
+
+A large relation is sampled, and `sample` reports the percentage and row count. A distinct count from a sample is a lower bound. Row counts also carry an `exact` flag. `CheckReference` reports containment and whether the target is a key; it does not prove that the database enforces a foreign key.
 
 ## Refusals
 
