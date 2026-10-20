@@ -294,6 +294,42 @@ export interface ReferenceMatch {
   targetIsKey: boolean;
 }
 
+/** The most rows a sample answers. */
+export const SAMPLE_ROWS_LIMIT = 20;
+
+/** The most characters a sampled value answers before it is cut. */
+export const SAMPLE_TEXT_LENGTH = 200;
+
+/** The relation, columns and number of rows to sample; every column when `columns` is absent. */
+export interface SampleRequest {
+  relation: string;
+  columns?: string[];
+  /** At most `SAMPLE_ROWS_LIMIT`. */
+  limit: number;
+}
+
+/** A sampled value as text, cut at `SAMPLE_TEXT_LENGTH` characters. */
+export interface SampledText {
+  text: string;
+  truncated: boolean;
+}
+
+/** A binary value, answered by its length only. */
+export interface SampledBinary {
+  bytes: number;
+}
+
+export type SampledValue = SampledText | SampledBinary | null;
+
+/** Rows of a relation, each value in the order of `columns`. */
+export interface RowSample {
+  relation: string;
+  columns: string[];
+  rows: SampledValue[][];
+  /** How the relation was sampled before its first rows were read, when it was. */
+  sample: SampleInfo | null;
+}
+
 /**
  * The connected database: engine, version, database and role.
  *
@@ -328,3 +364,10 @@ export const CheckReference =
   InterfaceFunction<
     (check: ReferenceCheck) => Promise<Measure<ReferenceMatch>>
   >();
+
+/**
+ * A few rows of a relation, for a person to look at. Unlike every other function, it answers
+ * row values: a consumer shows them to the project's owner and passes them to nothing else.
+ */
+export const SampleRows =
+  InterfaceFunction<(request: SampleRequest) => Promise<RowSample>>();
