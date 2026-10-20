@@ -15,6 +15,7 @@ Describes and profiles a database that an [`@antelopejs/interface-database`](htt
 - `DescribeRelations` details columns with their native types and the `@Field` declarations they accept, indexes and foreign keys.
 - `Profile` aggregates a relation per column and per foreign key, never returning rows.
 - `CheckReference` measures how much of one column's values another column holds, for references the database does not declare.
+- `SampleRows` answers a few rows of a relation, each value as text, for a person to look at; it is the one function that returns rows, and is never meant for a generator or a model.
 
 The answers follow the provider's own registration rules: a relation the catalog calls mappable registers, and the key it names is the one `_id` aliases.
 
