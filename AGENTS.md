@@ -1,11 +1,11 @@
 # interface-database-catalog
 
-`@antelopejs/interface-database-catalog` declares an AntelopeJS interface that describes and profiles a database an `@antelopejs/interface-database` provider is connected to but does not own. The whole contract is `src/index.ts`: types plus `InterfaceFunction` declarations, with no implementation. Providers implement it elsewhere.
+`@antelopejs/interface-database-catalog` declares an AntelopeJS interface that describes and profiles a database an `@antelopejs/interface-database` provider is connected to but does not own. The whole contract is `src/index.ts`: types, constants, and `InterfaceFunction` declarations, with no implementation. Providers implement it elsewhere.
 
 ## Layout
 
 - `src/index.ts` is the published contract, built to `dist/`.
-- `docs/` ships in the npm package and is the documentation the README links to. The fenced `ts docs-check` blocks in `README.md` and `docs/` compile in CI against `docs/tsconfig.json`, which maps the package name onto `src/index.ts`. Change a signature, and update the examples that call it.
+- `docs/` ships in the npm package and is the documentation the README links to. The fenced `ts docs-check` blocks in `docs/` compile in CI against `docs/tsconfig.json`, which maps the package name onto `src/index.ts`. Change a signature, and update the examples that call it.
 
 ## Versioning
 
@@ -14,6 +14,8 @@
 ## Tests
 
 There is no test suite. `pnpm test` runs `pnpm run build`, so `pnpm run checks` proves the package builds with its declarations.
+
+`pnpm run checks` does not run the documentation check (docs examples and the compatibility table); only CI does. To run it locally, clone AntelopeJS/tooling-configs at `v0.0.9`, run `npm ci --prefix actions/docs` in the clone, then from this repository run `node <clone>/actions/docs/check.mjs --files $'README.md\ndocs' --typescript-project docs/tsconfig.json`.
 
 <!-- antelopejs-guardrails:start -->
 <!-- Managed by @antelopejs/tooling-configs. `antelopejs-sync` rewrites everything between these markers; write repository-specific guidance outside them. -->
