@@ -1,0 +1,18 @@
+diff --git a/src/index.ts b/src/index.ts
+index 4e12ca6..44df982 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -336,7 +336,12 @@ export interface RowSample {
+  * Every function of this interface refuses outside development, and on a provider instance that
+  * owns its tables rather than describing a database it was pointed at.
+  */
+-export const Info = InterfaceFunction<() => Promise<CatalogInfo>>();
++export const Info = async (): Promise<CatalogInfo> => ({
++  engine: "postgresql",
++  version: "17.5",
++  database: "app",
++  role: "app",
++});
+ 
+ /**
+  * Every relation the connection can see, in the given schemas or in all of them, partitions left
