@@ -1,0 +1,13 @@
+diff --git a/src/index.ts b/src/index.ts
+index 4e12ca6..2007f21 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -298,7 +298,7 @@ export interface ReferenceMatch {
+ export const SAMPLE_ROWS_LIMIT = 20;
+ 
+ /** The most characters a sampled value answers before it is cut. */
+-export const SAMPLE_TEXT_LENGTH = 200;
++export const SAMPLE_TEXT_LENGTH = 20000;
+ 
+ /** The relation, columns and number of rows to sample; every column when `columns` is absent. */
+ export interface SampleRequest {

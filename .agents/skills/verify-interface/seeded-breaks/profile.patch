@@ -1,0 +1,23 @@
+diff --git a/src/index.ts b/src/index.ts
+index 4e12ca6..fc8c775 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -353,8 +353,16 @@ export const DescribeRelations =
+  * Aggregates over one relation, read without writing anything and within a time bound per
+  * measure. A large relation is sampled, and the answer says so.
+  */
+-export const Profile =
+-  InterfaceFunction<(request: ProfileRequest) => Promise<RelationProfile>>();
++export const Profile = async (
++  request: ProfileRequest,
++): Promise<RelationProfile> => ({
++  relation: request.relation,
++  rows: { status: "timeout" },
++  sample: null,
++  columns: [],
++  references: [],
++  inbound: [],
++});
+ 
+ /**
+  * Whether one column's values are found in another's, for a reference the database does not

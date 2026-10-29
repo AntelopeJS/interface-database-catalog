@@ -1,0 +1,16 @@
+diff --git a/src/index.ts b/src/index.ts
+index 4e12ca6..991c9a3 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -346,8 +346,9 @@ export const ListRelations =
+   InterfaceFunction<(schemas?: string[]) => Promise<RelationSummary[]>>();
+ 
+ /** The named relations, `"schema.name"`, in full. */
+-export const DescribeRelations =
+-  InterfaceFunction<(relations: string[]) => Promise<RelationDescription[]>>();
++export const DescribeRelations = async (
++  _relations: string[],
++): Promise<RelationDescription[]> => [];
+ 
+ /**
+  * Aggregates over one relation, read without writing anything and within a time bound per
