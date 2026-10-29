@@ -1,13 +1,13 @@
 diff --git a/src/index.ts b/src/index.ts
-index 4e12ca6..85a4def 100644
+index 4e12ca6..4187867 100644
 --- a/src/index.ts
 +++ b/src/index.ts
-@@ -295,7 +295,7 @@ export interface ReferenceMatch {
+@@ -325,7 +325,7 @@ export type SampledValue = SampledText | SampledBinary | null;
+ export interface RowSample {
+   relation: string;
+   columns: string[];
+-  rows: SampledValue[][];
++  rows: SampledValue[];
+   /** How the relation was sampled before its first rows were read, when it was. */
+   sample: SampleInfo | null;
  }
- 
- /** The most rows a sample answers. */
--export const SAMPLE_ROWS_LIMIT = 20;
-+export const SAMPLE_ROWS_LIMIT = 200;
- 
- /** The most characters a sampled value answers before it is cut. */
- export const SAMPLE_TEXT_LENGTH = 200;

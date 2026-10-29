@@ -5,6 +5,7 @@ docs:
   - docs/index.md
 journeys:
   - inspect-calls
+  - inspect-shapes
 ---
 
 # Inspect
@@ -14,6 +15,7 @@ A module author imports `Info`, `ListRelations` and `DescribeRelations` from `@a
 ## Sub-features
 
 - `inspect-calls`: the packed interface loads in `ajs project dev` next to a stub provider; each of the three functions resolves through core and the stub receives the arguments the consumer sent. An empty list of schemas and an unknown relation are the provider's to answer, not this interface's.
+- `inspect-shapes`: a probe compiled against the packed declarations reads back what each function answers: `Info` four strings, `ListRelations` an array of relation summaries (kind, estimate source, key, writes, comment), `DescribeRelations` the summary plus columns, indexes and the foreign keys out and in. A dropped, added, retyped or re-nested field fails the compile.
 
 ## How to get to it (user POV)
 

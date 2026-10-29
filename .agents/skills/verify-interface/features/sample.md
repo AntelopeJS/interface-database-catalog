@@ -5,17 +5,17 @@ docs:
   - docs/index.md
 journeys:
   - sample-calls
-  - sample-limits
+  - sample-shapes
 ---
 
 # Sample
 
-A module author imports `SampleRows` to show a person a few rows of a relation. It is the one function that answers row values, bounded by `SAMPLE_ROWS_LIMIT` (20 rows) and `SAMPLE_TEXT_LENGTH` (200 characters per value).
+A module author imports `SampleRows` to show a person a few rows of a relation. It is the one function that answers row values; [sample-limits](sample-limits.md) covers the bounds.
 
 ## Sub-features
 
 - `sample-calls`: `SampleRows` resolves through core to the stub provider with its request (`relation`, `limit`) intact.
-- `sample-limits`: the packed `dist/index.js` exports the two constants with the values `docs/index.md` states, 20 and 200. A different value is a changed bound on how much data a consumer can see.
+- `sample-shapes`: a probe compiled against the packed declarations reads back the structure of `RowSample`: `rows` is one array of sampled values per row (`SampledValue[][]`), each value a `{ text, truncated }`, a `{ bytes }` or `null`, next to `relation`, `columns` and `sample`.
 
 ## How to get to it (user POV)
 
@@ -29,4 +29,4 @@ pnpm exec antelopejs-verify journey "$RUN" sample
 
 ## Gotchas
 
-- The constants are values, not proxies: `every-function` cannot see them, so `sample-limits` reads them from the built package.
+- A type-only change to `RowSample` is invisible to the stub (it echoes) and to `minor-bump` when the change title releases a new minor; only `sample-shapes` reads the structure.
