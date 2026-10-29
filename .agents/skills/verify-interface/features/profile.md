@@ -5,6 +5,7 @@ docs:
   - docs/index.md
 journeys:
   - profile-calls
+  - profile-shapes
 ---
 
 # Profile
@@ -14,6 +15,7 @@ A module author imports `Profile` and `CheckReference` and measures one relation
 ## Sub-features
 
 - `profile-calls`: each function resolves through core to the stub provider with its request object intact (`relation`, `columns`, `from`, `to`). A measure that times out or fails (`timeout`, `error`) is the provider's answer; this interface only declares its shape.
+- `profile-shapes`: a probe compiled against the packed declarations reads back the structure of `RelationProfile` (rows, sample, per-column measures and traits, fan-out, inbound references) and of `CheckReference`'s `Measure<ReferenceMatch>`.
 
 ## How to get to it (user POV)
 
