@@ -54,11 +54,13 @@ Relations are named `"schema.name"`, the form `DescribeRelations` and `Profile` 
 
 Requires AntelopeJS core `>=1.14.0` and the following peer dependency:
 
-<!-- docs-compat: ./package.json#peerDependencies -->
+<!-- antelopejs-docs-compat:start -->
 
-| Package                      | Range            |
-| ---------------------------- | ---------------- |
-| `@antelopejs/interface-core` | `>=0.2.4 <1.0.0` |
+| Package                      | Supported        | Tested with |
+| ---------------------------- | ---------------- | ----------- |
+| `@antelopejs/interface-core` | `>=0.2.4 <1.0.0` | `0.2.4`     |
+
+<!-- antelopejs-docs-compat:end -->
 
 ## Contributing
 
