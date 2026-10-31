@@ -52,7 +52,7 @@ Relations are named `"schema.name"`, the form `DescribeRelations` and `Profile` 
 
 ## Compatibility
 
-Requires AntelopeJS core `>=1.14.0` and the following peer dependency:
+The interface has one AntelopeJS peer dependency:
 
 <!-- antelopejs-docs-compat:start -->
 

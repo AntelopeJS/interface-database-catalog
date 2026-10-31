@@ -51,7 +51,7 @@ Review `unmappable`, each column's `accepts` and `lossy` notes, and write permis
 
 A module that implements `@antelopejs/interface-database` over a database it does not own may also implement this interface. Each consumer reaches it through a connection declared on its own module entry in the project configuration, one per database. Two consumers of the same database give their connections the same id:
 
-```ts
+```ts fragment
 "dms-builder": {
   importOverrides: [
     { interface: "@antelopejs/interface-database-catalog", source: "postgres-erp", id: "erp" },
