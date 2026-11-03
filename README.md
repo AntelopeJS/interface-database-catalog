@@ -1,9 +1,9 @@
-# @antelopejs/interface-database-catalog
+# `@antelopejs/interface-database-catalog`
 
 <div align="center">
-<a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/License-Apache_2.0-000000?style=for-the-badge&labelColor=000000"></a>
-<a href="https://discord.gg/g4pFt6eXqu"><img alt="Discord" src="https://img.shields.io/badge/Discord-18181B?logo=discord&style=for-the-badge&color=000000"></a>
-<a href="https://github.com/AntelopeJS/interface-database-catalog/tree/main/docs"><img alt="Docs" src="https://img.shields.io/badge/Docs-18181B?style=for-the-badge&color=000000"></a>
+<a href="./LICENSE"><img data-illustration alt="License" src="https://img.shields.io/badge/License-Apache_2.0-000000?style=for-the-badge&labelColor=000000"></a>
+<a href="https://discord.gg/g4pFt6eXqu"><img data-illustration alt="Discord" src="https://img.shields.io/badge/Discord-18181B?logo=discord&style=for-the-badge&color=000000"></a>
+<a href="https://github.com/AntelopeJS/interface-database-catalog/tree/main/docs"><img data-illustration alt="Docs" src="https://img.shields.io/badge/Docs-18181B?style=for-the-badge&color=000000"></a>
 </div>
 
 Describes and profiles a database that an [`@antelopejs/interface-database`](https://github.com/AntelopeJS/interface-database) provider is connected to but does not own, so a generator can propose a module whose tables mirror it. It is a development tool: every function refuses outside development.
@@ -15,17 +15,17 @@ Describes and profiles a database that an [`@antelopejs/interface-database`](htt
 - `DescribeRelations` details columns with their native types and the `@Field` declarations they accept, indexes and foreign keys.
 - `Profile` aggregates a relation per column and per foreign key, never returning rows.
 - `CheckReference` measures how much of one column's values another column holds, for references the database does not declare.
-- `SampleRows` answers a few rows of a relation, each value as text, for a person to look at; it is the one function that returns rows, and is never meant for a generator or a model.
+- `SampleRows` answers a few rows of a relation, each value as text, for a person to look at. It is the one function that returns rows, and it is never meant for a generator or a model.
 
-The answers follow the provider's own registration rules: a relation the catalog calls mappable registers, and the key it names is the one `_id` aliases.
+The answers follow the provider's own registration rules. A relation the catalog calls mappable registers, and the key it names is the one `_id` aliases.
 
 ## Implementations
 
-No public module implements this interface yet. A provider of `@antelopejs/interface-database` that connects to a database it does not own can implement it as well.
+`@antelopejs/postgres`, `@antelopejs/mongodb` and `@antelopejs/rethinkdb` implement this interface next to `@antelopejs/interface-database`. Each lists it under `antelopeJs.implements` in its `package.json`. Another provider of `@antelopejs/interface-database` that connects to a database it does not own can implement it as well.
 
 ## Install
 
-The package is not published to npm yet. Once it is, add it to the module that reads the catalog:
+Add the package to the module that reads the catalog:
 
 ```bash
 pnpm add @antelopejs/interface-database-catalog
