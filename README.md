@@ -8,6 +8,8 @@
 
 Describes and profiles a database that an [`@antelopejs/interface-database`](https://github.com/AntelopeJS/interface-database) provider is connected to but does not own, so a generator can propose a module whose tables mirror it. It is a development tool: every function refuses outside development.
 
+Part of [AntelopeJS](https://github.com/AntelopeJS/antelopejs). Used by [AntelopeJS DMS](https://github.com/AntelopeJS/dms), the open-source back office for your PostgreSQL, MongoDB or RethinkDB database.
+
 ## What it offers
 
 - `Info` returns the engine, version, database and role of the connection.
