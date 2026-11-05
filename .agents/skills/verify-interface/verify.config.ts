@@ -100,20 +100,17 @@ const config: VerifyConfig = {
     contract: {
       globs: ["src/index.ts", "package.json"],
       funnels: [],
-      containments: [],
       why: "the six functions and the types they answer are what the DMS builder and every other consumer import",
     },
     outbound: null,
     exposure: {
       globs: ["src/index.ts"],
       funnels: [],
-      containments: [],
       why: "SampleRows answers row values and SAMPLE_ROWS_LIMIT and SAMPLE_TEXT_LENGTH bound how much of them a consumer sees",
     },
     publish: {
       globs: ["package.json", ".release-it.json", "changelogen.config.json", ".github/workflows/release.yml"],
       funnels: [],
-      containments: [],
       why: "the package name and release workflow claim @antelopejs/interface-database-catalog on npm",
     },
   },
