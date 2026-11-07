@@ -4,8 +4,7 @@ covers:
 docs:
   - docs/index.md
 journeys:
-  - profile-calls
-  - profile-shapes
+  - answer-shapes
 ---
 
 # Profile
@@ -14,8 +13,8 @@ A module author imports `Profile` and `CheckReference` and measures one relation
 
 ## Sub-features
 
-- `profile-calls`: each function resolves through core to the stub provider with its request object intact (`relation`, `columns`, `from`, `to`). A measure that times out or fails (`timeout`, `error`) is the provider's answer; this interface only declares its shape.
-- `profile-shapes`: a probe compiled against the packed declarations reads back the structure of `RelationProfile` (rows, sample, per-column measures and traits, fan-out, inbound references) and of `CheckReference`'s `Measure<ReferenceMatch>`.
+- `answer-shapes`: a probe compiled against the packed declarations reads back the structure of `RelationProfile` (rows, sample, per-column measures and traits, fan-out, inbound references) and of `CheckReference`'s `Measure<ReferenceMatch>`.
+- Each function resolving through core to the stub provider with the consumer's arguments is `smoke`'s `every-function`. A measure that times out or fails (`timeout`, `error`) is the provider's answer; this interface only declares its shape.
 
 ## How to get to it (user POV)
 
@@ -29,4 +28,4 @@ pnpm exec antelopejs-verify journey "$RUN" profile
 
 ## Gotchas
 
-- Omitting `columns` profiles every column; the journey sends them, because the stub answers whatever it receives.
+- Omitting `columns` profiles every column. The stub answers whatever it receives, so no journey here can tell the two apart.
