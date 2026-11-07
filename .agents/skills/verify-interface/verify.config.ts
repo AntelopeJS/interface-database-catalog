@@ -1,31 +1,5 @@
-import { equal, interrupted } from "@antelopejs/tooling-configs/verify";
-import type { CallRequest, Journey, VerifyConfig } from "@antelopejs/tooling-configs/verify";
-
-/** A consumer call of one catalog function and the arguments it sends. */
-interface Call {
-  name: string;
-  args: NonNullable<CallRequest["args"]>;
-}
-
-/** Loads the packed catalog next to a stub provider and calls each function through core: the stub must answer, with the arguments it received. */
-function throughCore(title: string, calls: Call[]): Journey {
-  return {
-    title,
-    entryPoint: "a consumer module calling the packed catalog in `ajs project dev`",
-    async run(context) {
-      const app = await context.dev("ajs project dev", context.fixture());
-      for (const { name, args } of calls) {
-        const result = await context.call(`call ${name}`, app, { path: [name], args });
-        context.expect(result.folder, [
-          { name: `${name} resolved through core`, pass: result.ok, detail: JSON.stringify(result.value) },
-          equal(`${name} reached the provider with its arguments`, result.value, { stub: `.:${name}`, args }),
-        ]);
-      }
-      const stopped = await context.stop("SIGINT", app);
-      context.expect(stopped.folder, [interrupted(stopped)]);
-    },
-  };
-}
+import { equal } from "@antelopejs/tooling-configs/verify";
+import type { Journey, VerifyConfig } from "@antelopejs/tooling-configs/verify";
 
 /** The checks every probe shares: `Assert<Same<A, B>>` fails to compile when A and B are not assignable both ways. */
 const PROBE_HEADER = `
@@ -93,6 +67,12 @@ const SAMPLE_ANSWERS = `
 type _Rows = Assert<Same<Answer<typeof Api.SampleRows>, { relation: string; columns: string[]; rows: ({ text: string; truncated: boolean } | { bytes: number } | null)[][]; sample: ${SAMPLE_INFO} }>>;
 `;
 
+/** `every-function` calls only exports whose declared type has a call signature, and `Same` accepts `any`: a function typed `any` would slip past both. */
+const DECLARED_TYPES = `
+type IsAny<T> = 0 extends 1 & T ? true : false;
+type _Typed = Assert<Same<IsAny<typeof Api.Info> | IsAny<typeof Api.ListRelations> | IsAny<typeof Api.DescribeRelations> | IsAny<typeof Api.Profile> | IsAny<typeof Api.CheckReference> | IsAny<typeof Api.SampleRows>, false>>;
+`;
+
 const config: VerifyConfig = {
   doors: {
     data: null,
@@ -115,24 +95,10 @@ const config: VerifyConfig = {
     },
   },
   journeys: {
-    "inspect-calls": throughCore("Info, ListRelations and DescribeRelations reach the provider", [
-      { name: "Info", args: [] },
-      { name: "ListRelations", args: [["public"]] },
-      { name: "DescribeRelations", args: [["public.orders"]] },
-    ]),
-    "profile-calls": throughCore("Profile and CheckReference reach the provider", [
-      { name: "Profile", args: [{ relation: "public.orders", columns: ["status"] }] },
-      {
-        name: "CheckReference",
-        args: [{ from: { relation: "public.orders", column: "customer_id" }, to: { relation: "public.customers", column: "id" } }],
-      },
-    ]),
-    "sample-calls": throughCore("SampleRows reaches the provider", [
-      { name: "SampleRows", args: [{ relation: "public.orders", limit: 5 }] },
-    ]),
-    "inspect-shapes": answerTypes("Info, ListRelations and DescribeRelations answer the documented structure", INSPECT_ANSWERS),
-    "profile-shapes": answerTypes("Profile and CheckReference answer the documented structure", PROFILE_ANSWERS),
-    "sample-shapes": answerTypes("SampleRows answers rows of sampled values, one array per row", SAMPLE_ANSWERS),
+    "answer-shapes": answerTypes(
+      "Info, ListRelations, DescribeRelations, Profile, CheckReference and SampleRows are typed functions answering the documented structure",
+      `${DECLARED_TYPES}\nnamespace Inspect {${INSPECT_ANSWERS}}\nnamespace ProfileAnswers {${PROFILE_ANSWERS}}\nnamespace Sample {${SAMPLE_ANSWERS}}`,
+    ),
     "sample-limits": {
       title: "the packed interface exports the documented sample limits",
       entryPoint: "the packed interface required from a consumer",
