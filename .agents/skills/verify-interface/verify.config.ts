@@ -67,6 +67,12 @@ const SAMPLE_ANSWERS = `
 type _Rows = Assert<Same<Answer<typeof Api.SampleRows>, { relation: string; columns: string[]; rows: ({ text: string; truncated: boolean } | { bytes: number } | null)[][]; sample: ${SAMPLE_INFO} }>>;
 `;
 
+/** `every-function` calls only exports whose declared type has a call signature, and `Same` accepts `any`: a function typed `any` would slip past both. */
+const DECLARED_TYPES = `
+type IsAny<T> = 0 extends 1 & T ? true : false;
+type _Typed = Assert<Same<IsAny<typeof Api.Info> | IsAny<typeof Api.ListRelations> | IsAny<typeof Api.DescribeRelations> | IsAny<typeof Api.Profile> | IsAny<typeof Api.CheckReference> | IsAny<typeof Api.SampleRows>, false>>;
+`;
+
 const config: VerifyConfig = {
   doors: {
     data: null,
@@ -90,8 +96,8 @@ const config: VerifyConfig = {
   },
   journeys: {
     "answer-shapes": answerTypes(
-      "Info, ListRelations, DescribeRelations, Profile, CheckReference and SampleRows answer the documented structure",
-      `namespace Inspect {${INSPECT_ANSWERS}}\nnamespace ProfileAnswers {${PROFILE_ANSWERS}}\nnamespace Sample {${SAMPLE_ANSWERS}}`,
+      "Info, ListRelations, DescribeRelations, Profile, CheckReference and SampleRows are typed functions answering the documented structure",
+      `${DECLARED_TYPES}\nnamespace Inspect {${INSPECT_ANSWERS}}\nnamespace ProfileAnswers {${PROFILE_ANSWERS}}\nnamespace Sample {${SAMPLE_ANSWERS}}`,
     ),
     "sample-limits": {
       title: "the packed interface exports the documented sample limits",
