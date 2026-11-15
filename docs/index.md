@@ -4,7 +4,7 @@ description: Discover, describe and profile the relations of a database that an 
 mode: how-to
 ---
 
-Use `@antelopejs/interface-database-catalog` to discover relations, inspect their structure, and profile aggregate characteristics before mapping an existing database into an application. The catalog describes a provider's connection. It does not open a new connection or register tables. It returns no raw records, except through `SampleRows`, which answers a few rows for a person to look at.
+Use `@antelopejs/interface-database-catalog` to discover relations, inspect their structure, and profile aggregate characteristics before mapping an existing database into an application. The catalog describes a provider's connection. It does not open a new connection or register tables; only a driver's `probe`, described below, signs in on its own. It returns no raw records, except through `SampleRows`, which answers a few rows for a person to look at.
 
 ## Before you begin
 
@@ -143,3 +143,52 @@ Every function refuses:
 
 - outside development;
 - on a provider instance that owns its tables.
+
+## Probe a connection string
+
+Every AntelopeJS database driver exports `probe` from `dist/probe.js`, typed `export const probe: Probe`. A caller requires it as `@antelopejs/<driver>/dist/probe` to learn whether a connection string signs in and what the account may do. The probe opens its own connection from the URL and is not a catalog function. The interface declares the types; each driver implements them.
+
+```ts docs-check
+import type { Probe } from "@antelopejs/interface-database-catalog";
+
+export async function probeUrl(driver: string, url: string) {
+  const { probe }: { probe: Probe } = require(
+    `@antelopejs/${driver}/dist/probe`,
+  );
+  const timeoutMs = 5000;
+  const controller = new AbortController();
+  const deadline = setTimeout(() => controller.abort(), 3 * timeoutMs);
+  try {
+    return await probe({ url, timeoutMs, signal: controller.signal });
+  } finally {
+    clearTimeout(deadline);
+  }
+}
+```
+
+`require` returns an untyped value, and the annotation states its shape without checking it. It holds because each driver's `dist/probe.js` exports `probe` typed `Probe`.
+
+`ProbeConfig` takes:
+
+- `url`, the connection string the driver's `config.url` takes, with the database as its path;
+- `timeoutMs`, which bounds the connect and each answer;
+- `signal`, which closes everything the probe opened at once when it aborts. The caller sets its own deadline on it.
+
+A probe never rejects and changes no row. It answers a `ProbeAnswer`, told apart by `outcome`:
+
+| `outcome`       | Fields                                                     | Meaning                                     |
+| --------------- | ---------------------------------------------------------- | ------------------------------------------- |
+| `"unreachable"` | `message`                                                  | No server answered at the URL.              |
+| `"refused"`     | `refusal`, `message`                                       | A server answered and refused the sign-in.  |
+| `"signed-in"`   | `latencyMs`, `user?`, `canRead`, `canWrite`, `unreadable?` | The account signed in, with what it may do. |
+
+`refusal` is a `ProbeRefusal`: `"credentials"`, `"host"`, `"database"`, `"database-denied"`, `"sign-in-required"` or `"other"`.
+
+For a signed-in account:
+
+- `canWrite` is true when the account may insert, update or delete in any relation it sees;
+- `canRead` is true when it may read any relation it sees, or sees none, and false whenever `unreadable` is set;
+- `latencyMs` is how long the account's first query took, rounded up to a millisecond;
+- `unreadable`, a `ProbeUnreadable`, comes with `canRead: false` and says why the account cannot read when the cause is not its privileges: `"no-database-named"`, `"no-database"` or `"cannot-list"`.
+
+`message` is the driver's own text. A caller that shows it to a person writes its own sentence and redacts the URL and the password first.
