@@ -331,6 +331,72 @@ export interface RowSample {
 }
 
 /**
+ * Why the server turned the probe away: wrong user or password, a client host the server does
+ * not accept, a database that does not exist, a database the account may not connect to, a
+ * server that wants credentials the URL does not give, or any other refusal.
+ */
+export type ProbeRefusal =
+  | "credentials"
+  | "host"
+  | "database"
+  | "database-denied"
+  | "sign-in-required"
+  | "other";
+
+/**
+ * Why a signed-in probe read no relation: the URL names no database, the named database does not
+ * exist, or the account may not list the relations it sees.
+ */
+export type ProbeUnreadable =
+  | "no-database-named"
+  | "no-database"
+  | "cannot-list";
+
+/** What a driver's probe connects to, and how long it may take. */
+export type ProbeConfig = {
+  /** The connection string the driver's `config.url` takes; the database is its path. */
+  url: string;
+  /** Bounds the connect and each answer, in milliseconds. */
+  timeoutMs: number;
+  /** When it aborts, the probe closes everything it opened at once. */
+  signal: AbortSignal;
+};
+
+/** What a probe found, told apart by `outcome`. */
+export type ProbeAnswer =
+  | {
+      /** No server answered at the URL. */
+      outcome: "unreachable";
+      message: string;
+    }
+  | {
+      /** A server answered and refused the sign-in. */
+      outcome: "refused";
+      refusal: ProbeRefusal;
+      message: string;
+    }
+  | {
+      /** The account signed in. */
+      outcome: "signed-in";
+      /** How long the account's first query took, in milliseconds, rounded up. */
+      latencyMs: number;
+      /** The account the server signed in, when it names one. */
+      user?: string;
+      /** The account may read any relation it sees, or it sees none. */
+      canRead: boolean;
+      /** The account may insert, update or delete in any relation it sees. */
+      canWrite: boolean;
+      unreadable?: ProbeUnreadable;
+    };
+
+/**
+ * Signs in to a database and reports what the account may do there. Every driver exports one as
+ * `probe` from `dist/probe.js`, required as `@antelopejs/<driver>/dist/probe`. It never rejects
+ * and changes no row.
+ */
+export type Probe = (config: ProbeConfig) => Promise<ProbeAnswer>;
+
+/**
  * The connected database: engine, version, database and role.
  *
  * Every function of this interface refuses outside development, and on a provider instance that

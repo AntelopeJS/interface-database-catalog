@@ -22,6 +22,7 @@ Describes and profiles a database that an [`@antelopejs/interface-database`](htt
 - `Profile` aggregates a relation per column and per foreign key, never returning rows.
 - `CheckReference` measures how much of one column's values another column holds, for references the database does not declare.
 - `SampleRows` answers a few rows of a relation, each value as text, for a person to look at. It is the one function that returns rows, and it is never meant for a generator or a model.
+- `Probe` types the `probe` every driver exports from `dist/probe.js`: it signs in with a connection string and answers whether the account may read and write.
 
 The answers follow the provider's own registration rules. A relation the catalog calls mappable registers, and the key it names is the one `_id` aliases.
 
