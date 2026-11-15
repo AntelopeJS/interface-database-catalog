@@ -12,7 +12,7 @@
 
 </div>
 
-Describes and profiles a database that an [`@antelopejs/interface-database`](https://github.com/AntelopeJS/interface-database) provider is connected to but does not own, so a generator can propose a module whose tables mirror it. It is a development tool: every function refuses outside development.
+Describes and profiles a database that an [`@antelopejs/interface-database`](https://github.com/AntelopeJS/interface-database) provider is connected to but does not own, so a generator can propose a module whose tables mirror it. It is a development tool: every catalog function refuses outside development.
 
 ## What it offers
 

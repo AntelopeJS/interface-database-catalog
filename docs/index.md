@@ -4,7 +4,7 @@ description: Discover, describe and profile the relations of a database that an 
 mode: how-to
 ---
 
-Use `@antelopejs/interface-database-catalog` to discover relations, inspect their structure, and profile aggregate characteristics before mapping an existing database into an application. The catalog describes a provider's connection. It does not open a new connection or register tables. It returns no raw records, except through `SampleRows`, which answers a few rows for a person to look at.
+Use `@antelopejs/interface-database-catalog` to discover relations, inspect their structure, and profile aggregate characteristics before mapping an existing database into an application. The catalog describes a provider's connection. It does not open a new connection or register tables; only a driver's `probe`, described below, signs in on its own. It returns no raw records, except through `SampleRows`, which answers a few rows for a person to look at.
 
 ## Before you begin
 
@@ -146,7 +146,7 @@ Every function refuses:
 
 ## Probe a connection string
 
-Every driver that implements this interface also exports `probe` from `dist/probe.js`, typed `export const probe: Probe`. A caller requires it as `@antelopejs/<driver>/dist/probe` before any provider is configured, to learn whether a connection string signs in and what the account may do. The interface declares the types; each driver implements them.
+Every AntelopeJS database driver exports `probe` from `dist/probe.js`, typed `export const probe: Probe`. A caller requires it as `@antelopejs/<driver>/dist/probe` to learn whether a connection string signs in and what the account may do. The probe opens its own connection from the URL and is not a catalog function. The interface declares the types; each driver implements them.
 
 ```ts docs-check
 import type { Probe } from "@antelopejs/interface-database-catalog";
@@ -187,8 +187,8 @@ A probe never rejects and changes no row. It answers a `ProbeAnswer`, told apart
 For a signed-in account:
 
 - `canWrite` is true when the account may insert, update or delete in any relation it sees;
-- `canRead` is true when it may read any relation it sees, or sees none;
+- `canRead` is true when it may read any relation it sees, or sees none, and false whenever `unreadable` is set;
 - `latencyMs` is how long the account's first query took, rounded up to a millisecond;
-- `unreadable`, a `ProbeUnreadable`, says why no relation was read: `"no-database-named"`, `"no-database"` or `"cannot-list"`.
+- `unreadable`, a `ProbeUnreadable`, comes with `canRead: false` and says why the account cannot read when the cause is not its privileges: `"no-database-named"`, `"no-database"` or `"cannot-list"`.
 
 `message` is the driver's own text. A caller that shows it to a person writes its own sentence and redacts the URL and the password first.

@@ -344,8 +344,9 @@ export type ProbeRefusal =
   | "other";
 
 /**
- * Why a signed-in probe read no relation: the URL names no database, the named database does not
- * exist, or the account may not list the relations it sees.
+ * Why a signed-in account cannot read, when the cause is not its privileges: the URL names no
+ * database, the server has no database with that name, or the account may not list the database's
+ * relations.
  */
 export type ProbeUnreadable =
   | "no-database-named"
@@ -367,12 +368,14 @@ export type ProbeAnswer =
   | {
       /** No server answered at the URL. */
       outcome: "unreachable";
+      /** The driver's own text, which may hold the URL or the password; redact it before showing it. */
       message: string;
     }
   | {
       /** A server answered and refused the sign-in. */
       outcome: "refused";
       refusal: ProbeRefusal;
+      /** The driver's own text, which may hold the URL or the password; redact it before showing it. */
       message: string;
     }
   | {
@@ -382,10 +385,14 @@ export type ProbeAnswer =
       latencyMs: number;
       /** The account the server signed in, when it names one. */
       user?: string;
-      /** The account may read any relation it sees, or it sees none. */
+      /**
+       * The account may read any relation it sees, or it sees none. False whenever `unreadable` is
+       * set.
+       */
       canRead: boolean;
       /** The account may insert, update or delete in any relation it sees. */
       canWrite: boolean;
+      /** Why the account cannot read when the cause is not its privileges; set only with `canRead` false. */
       unreadable?: ProbeUnreadable;
     };
 
