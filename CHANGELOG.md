@@ -1,6 +1,34 @@
 # Changelog
 
 
+## v0.1.0
+
+[compare changes](https://github.com/AntelopeJS/interface-database-catalog/compare/v0.0.4...v0.1.0)
+
+### 🚀 Enhancements
+
+- Export the Probe types every driver's dist/probe.js implements ([#35](https://github.com/AntelopeJS/interface-database-catalog/pull/35))
+
+### 📖 Documentation
+
+- **readme:** Adopt the AntelopeJS framework README style ([#32](https://github.com/AntelopeJS/interface-database-catalog/pull/32))
+
+### 📦 Build
+
+- **deps:** ⚠️  Move to tooling-configs 0.7.1 and cap @antelopejs ranges below the next minor ([#34](https://github.com/AntelopeJS/interface-database-catalog/pull/34))
+
+### 🤖 CI
+
+- Run the checks on Windows beside Linux ([#33](https://github.com/AntelopeJS/interface-database-catalog/pull/33))
+
+#### ⚠️ Breaking Changes
+
+- **deps:** ⚠️  Move to tooling-configs 0.7.1 and cap @antelopejs ranges below the next minor ([#34](https://github.com/AntelopeJS/interface-database-catalog/pull/34))
+
+### ❤️ Contributors
+
+- Antony Rizzitelli ([@Upd4ting](http://github.com/Upd4ting))
+
 ## v0.0.4
 
 [compare changes](https://github.com/AntelopeJS/interface-database-catalog/compare/v0.0.3...v0.0.4)
