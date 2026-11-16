@@ -390,7 +390,9 @@ export type ProbeAnswer =
        * set.
        */
       canRead: boolean;
-      /** The account may insert, update or delete in any relation it sees. */
+      /**
+       * The account may insert, update or delete in any relation it sees, or create tables.
+       */
       canWrite: boolean;
       /** Why the account cannot read when the cause is not its privileges; set only with `canRead` false. */
       unreadable?: ProbeUnreadable;
