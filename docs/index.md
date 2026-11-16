@@ -186,7 +186,7 @@ A probe never rejects and changes no row. It answers a `ProbeAnswer`, told apart
 
 For a signed-in account:
 
-- `canWrite` is true when the account may insert, update or delete in any relation it sees;
+- `canWrite` is true when the account may create a table in the database the URL names, or insert, update or delete in a relation it sees;
 - `canRead` is true when it may read any relation it sees, or sees none, and false whenever `unreadable` is set;
 - `latencyMs` is how long the account's first query took, rounded up to a millisecond;
 - `unreadable`, a `ProbeUnreadable`, comes with `canRead: false` and says why the account cannot read when the cause is not its privileges: `"no-database-named"`, `"no-database"` or `"cannot-list"`.
