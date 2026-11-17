@@ -12,4 +12,4 @@ permissions:
 
 jobs:
   stale:
-    uses: AntelopeJS/.github/.github/workflows/stale.yml@v1
+    uses: AntelopeJS/.github/.github/workflows/stale.yml@v2
