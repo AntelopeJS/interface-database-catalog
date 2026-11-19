@@ -56,12 +56,12 @@ Before you generate table declarations, review `unmappable`, each column's `acce
 A module that implements `@antelopejs/interface-database` over a database it does not own may also implement this interface. Each consumer reaches it through a connection declared on its own module entry in the project configuration, one per database. Two consumers of the same database give their connections the same id:
 
 ```ts fragment
-"dms-builder": {
+"dms": {
   importOverrides: [
     { interface: "@antelopejs/interface-database-catalog", source: "postgres-erp", id: "erp" },
   ],
 },
-"dms-ai": {
+"dms-database": {
   importOverrides: [
     { interface: "@antelopejs/interface-database-catalog", source: "postgres-erp", id: "erp" },
   ],
