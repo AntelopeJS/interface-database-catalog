@@ -6,7 +6,8 @@
     "composite": false,
     "incremental": false,
     "paths": {
-      "@antelopejs/interface-database-catalog": ["../src/index.ts"]
+      "@antelopejs/interface-database-catalog": ["../src/index.ts"],
+      "@antelopejs/interface-database-catalog/testing": ["../src/testing.ts"]
     }
   },
   "include": ["../src/**/*.ts", "./**/*.ts"]

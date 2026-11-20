@@ -144,6 +144,48 @@ Every function refuses:
 - outside development;
 - on a provider instance that owns its tables.
 
+## Test that a profile names no rare value
+
+A profile may name a value only when it counts it in at least `NAMED_VALUE_MIN_ROWS` (5) rows. `@antelopejs/interface-database-catalog/testing` exports `AssertNoRareValue`, which a driver's tests call with:
+
+- `profile`, the `RelationProfile` the driver answered;
+- `results`, every result set its connection received while it profiled, as JSON reads them;
+- `counts`, for each profiled column, how many rows of the driver's fixture hold each value.
+
+It throws, listing every leak, when a column's `range` or `categories`, or any value in a result set, names a value the fixture counts fewer than 5 times, and when a category is counted fewer than 5 times. Each value in a result set is compared whole, as text, so `"7001"` matches the number `7001` and `17001` does not.
+
+```ts docs-check
+import { Profile } from "@antelopejs/interface-database-catalog";
+import {
+  AssertNoRareValue,
+  type ResultValue,
+} from "@antelopejs/interface-database-catalog/testing";
+
+/** The result sets the driver's connection receives, appended by the driver's own tap. */
+const received: ResultValue[] = [];
+
+it("names no level counted fewer than 5 times", async () => {
+  received.length = 0;
+  const profile = await Profile({
+    relation: "sales.grades",
+    columns: ["level"],
+  });
+  AssertNoRareValue({
+    profile,
+    results: received,
+    counts: {
+      level: [
+        { value: 7001, rows: 4 },
+        { value: 7002, rows: 5 },
+        { value: 7008, rows: 5 },
+      ],
+    },
+  });
+});
+```
+
+A driver whose rows hold dates or buffers passes `JSON.parse(JSON.stringify(rows))`. A result set that legitimately names a rare value, such as an enum's declared labels, is left out of `results`.
+
 ## Probe a connection string
 
 Every AntelopeJS database driver exports `probe` from `dist/probe.js`, typed `export const probe: Probe`. A caller requires it as `@antelopejs/<driver>/dist/probe` to learn whether a connection string signs in and what the account may do. The probe opens its own connection from the URL and is not a catalog function. The interface declares the types; each driver implements them.
