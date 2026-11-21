@@ -1,6 +1,33 @@
 # Changelog
 
 
+## v0.1.1
+
+[compare changes](https://github.com/AntelopeJS/interface-database-catalog/compare/v0.1.0...v0.1.1)
+
+### 📖 Documentation
+
+- Name the CREATE right in the canWrite TSDoc and docs ([#37](https://github.com/AntelopeJS/interface-database-catalog/pull/37))
+- Name the current catalog consumers ([#42](https://github.com/AntelopeJS/interface-database-catalog/pull/42))
+
+### 🏡 Chore
+
+- Remove the verify skill ([#36](https://github.com/AntelopeJS/interface-database-catalog/pull/36))
+- Promote next to main ([#40](https://github.com/AntelopeJS/interface-database-catalog/pull/40))
+
+### ✅ Tests
+
+- **catalog:** Share a check that a profile names no value counted fewer than 5 times ([#43](https://github.com/AntelopeJS/interface-database-catalog/pull/43))
+
+### 🤖 CI
+
+- Add the next-sync workflow ([#38](https://github.com/AntelopeJS/interface-database-catalog/pull/38))
+- Roll out the trunk CI and merge queue workflows ([#41](https://github.com/AntelopeJS/interface-database-catalog/pull/41))
+
+### ❤️ Contributors
+
+- Antony Rizzitelli
+
 ## v0.1.0
 
 [compare changes](https://github.com/AntelopeJS/interface-database-catalog/compare/v0.0.4...v0.1.0)
